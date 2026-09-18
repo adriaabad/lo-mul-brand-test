@@ -85,102 +85,40 @@ Edita `config.js`:
 ```js
 window.LO_MUL_CONFIG = {
   SUPABASE_URL: "https://EL-TEU-PROJECTE.supabase.co",
-  SUPABASE_ANON_KEY: "LA-TEVA-CLAU-ANON-PUBLICA",
+  SUPABASE_PUBLISHABLE_KEY: "LA-TEVA-CLAU-PUBLICABLE",
+  SUPABASE_ANON_KEY: "",
   PROJECT_ID: "lo-mul-brand-test",
   randomizeWithinSections: false
 };
 ```
 
-Utilitza exclusivament la clau pública `anon`. **No posis mai la clau `service_role` al frontend.**
+Utilitza exclusivament la clau `publishable` (`sb_publishable_...`). La clau `anon` antiga continua sent compatible, però no és necessària en projectes nous. **No posis mai una clau `secret` o `service_role` al frontend.**
 
 Quan `randomizeWithinSections` és `true`, cada secció es barreja una sola vegada en crear la sessió. La seqüència queda desada a `localStorage` i es manté després de recarregar.
 
 Si Supabase no està configurat, tota l’aplicació continua funcionant i la pantalla final permet exportar un JSON.
 
-## 6. SQL per crear les taules i la política RLS
+## 6. Base de dades i seguretat
 
-Executa aquest SQL a l’SQL Editor de Supabase. Crea dues taules, activa Row Level Security i exposa una única funció transaccional d’inserció. Els rols públics no reben permisos de lectura.
+La base de dades del projecte ja està creada a Supabase. Les taules `private.test_sessions` i `private.test_responses` tenen RLS activat i no concedeixen accés directe als rols del navegador.
+
+El frontend només pot executar `public.submit_visual_test(jsonb)`. Aquesta funció valida el projecte, les dates, la mida del payload, els 48 elements esperats, els identificadors permesos i la correspondència entre valoració i puntuació abans de fer una inserció atòmica. El rol públic no pot llegir, editar ni eliminar resultats.
+
+Per veure totes les respostes des de l’SQL Editor de Supabase:
 
 ```sql
-create table if not exists public.test_sessions (
-  session_id uuid primary key,
-  project_id text not null,
-  client_name text,
-  created_at timestamptz not null,
-  completed_at timestamptz not null,
-  user_agent text
-);
-
-create table if not exists public.test_responses (
-  id bigint generated always as identity primary key,
-  session_id uuid not null references public.test_sessions(session_id) on delete cascade,
-  section text not null check (section in ('fonts', 'icons', 'graphics')),
-  item_id text not null,
-  item_label text not null,
-  rating text not null check (rating in ('love', 'interesting', 'not_for_me', 'dislike')),
-  score smallint not null check (score between 0 and 3),
-  comment text not null default '',
-  answered_at timestamptz not null,
-  unique (session_id, section, item_id)
-);
-
-alter table public.test_sessions enable row level security;
-alter table public.test_responses enable row level security;
-
-revoke all on public.test_sessions from anon, authenticated;
-revoke all on public.test_responses from anon, authenticated;
-
-create or replace function public.submit_visual_test(payload jsonb)
-returns void
-language plpgsql
-security definer
-set search_path = public
-as $$
-begin
-  insert into public.test_sessions (
-    session_id,
-    project_id,
-    client_name,
-    created_at,
-    completed_at,
-    user_agent
-  ) values (
-    (payload->>'session_id')::uuid,
-    payload->>'project_id',
-    nullif(payload->>'client_name', ''),
-    (payload->>'created_at')::timestamptz,
-    (payload->>'completed_at')::timestamptz,
-    payload->>'user_agent'
-  );
-
-  insert into public.test_responses (
-    session_id,
-    section,
-    item_id,
-    item_label,
-    rating,
-    score,
-    comment,
-    answered_at
-  )
-  select
-    (payload->>'session_id')::uuid,
-    response->>'section',
-    response->>'item_id',
-    response->>'item_label',
-    response->>'rating',
-    (response->>'score')::smallint,
-    coalesce(response->>'comment', ''),
-    (response->>'answered_at')::timestamptz
-  from jsonb_array_elements(payload->'responses') as response;
-end;
-$$;
-
-revoke all on function public.submit_visual_test(jsonb) from public;
-grant execute on function public.submit_visual_test(jsonb) to anon, authenticated;
+select
+  s.client_name,
+  s.submitted_at,
+  r.section,
+  r.item_label,
+  r.rating,
+  r.score,
+  r.comment
+from private.test_sessions as s
+join private.test_responses as r using (session_id)
+order by s.submitted_at desc, r.section, r.item_id;
 ```
-
-La funció `security definer` fa una única inserció atòmica. Les taules no són llegibles ni modificables pels visitants i no hi ha cap política `SELECT`, `UPDATE` o `DELETE`. Per consultar els resultats, utilitza el Table Editor de Supabase amb un compte autoritzat o fes una consulta des d’un entorn servidor segur.
 
 ## 7. Publicar a GitHub Pages
 
@@ -198,7 +136,7 @@ Puja el contingut complet de la carpeta a la carpeta pública del teu hosting (`
 ## 9. Consultar o exportar respostes
 
 - **Sense Supabase:** a la pantalla final, prem «Exportar JSON».
-- **Amb Supabase:** consulta `test_sessions` i `test_responses` des del Table Editor o des d’un backend amb credencials segures.
+- **Amb Supabase:** consulta `private.test_sessions` i `private.test_responses` des del Table Editor, l’SQL Editor o un backend amb credencials segures.
 - Durant el test, l’estat es desa automàticament a `localStorage` amb una clau vinculada al `PROJECT_ID`.
 - Per reiniciar manualment una prova durant el desenvolupament, elimina la clau `lo-mul-visual-test:lo-mul-brand-test:v2` des de les eines del navegador.
 

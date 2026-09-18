@@ -4,6 +4,7 @@
   const config = Object.assign(
     {
       SUPABASE_URL: "",
+      SUPABASE_PUBLISHABLE_KEY: "",
       SUPABASE_ANON_KEY: "",
       PROJECT_ID: "lo-mul-brand-test",
       randomizeWithinSections: false,
