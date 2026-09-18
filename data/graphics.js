@@ -1,0 +1,86 @@
+window.LO_MUL_GRAPHICS = [
+  {
+    id: "graphic-01",
+    file: "assets/graphics/graphic-01.png",
+    name: "Rosas",
+    tags: ["editorial", "fotografia escènica", "tipografia expressiva"],
+  },
+  {
+    id: "graphic-02",
+    file: "assets/graphics/graphic-02.png",
+    name: "Akram Khan Company",
+    tags: ["fotografia immersiva", "contrast", "serif"],
+  },
+  {
+    id: "graphic-03",
+    file: "assets/graphics/graphic-03.png",
+    name: "Cirque Le Roux",
+    tags: ["cinematogràfic", "atmosfèric", "composició central"],
+  },
+  {
+    id: "graphic-04",
+    file: "assets/graphics/graphic-04.png",
+    name: "Collectif Petit Travers",
+    tags: ["editorial", "asimètric", "contrast alt"],
+  },
+  {
+    id: "graphic-05",
+    file: "assets/graphics/graphic-05.png",
+    name: "Movedbymatter",
+    tags: ["fotografia a sang", "condensada", "contemporani"],
+  },
+  {
+    id: "graphic-06",
+    file: "assets/graphics/graphic-06.png",
+    name: "Cirque Pardi!",
+    tags: ["groc", "cartell", "industrial"],
+  },
+  {
+    id: "graphic-07",
+    file: "assets/graphics/graphic-07.png",
+    name: "Aurélien Bory — C111",
+    tags: ["minimal", "retícula", "blanc i negre"],
+  },
+  {
+    id: "graphic-08",
+    file: "assets/graphics/graphic-08.png",
+    name: "Un Loup pour l’Homme",
+    tags: ["símbol", "taronja", "superposició"],
+  },
+  {
+    id: "graphic-09",
+    file: "assets/graphics/graphic-09.png",
+    name: "Peeping Tom",
+    tags: ["fosc", "cinematogràfic", "navegació condensada"],
+  },
+  {
+    id: "graphic-10",
+    file: "assets/graphics/graphic-10.png",
+    name: "XY Collectif",
+    tags: ["mosaic", "documental", "espai blanc"],
+  },
+  {
+    id: "graphic-11",
+    file: "assets/graphics/graphic-11.png",
+    name: "Los Galindos",
+    tags: ["orgànic", "artesanal", "fotografia humana"],
+  },
+  {
+    id: "graphic-12",
+    file: "assets/graphics/graphic-12.png",
+    name: "Animal Religion",
+    tags: ["verd fluorescent", "il·lustració", "directe"],
+  },
+  {
+    id: "graphic-13",
+    file: "assets/graphics/graphic-13.png",
+    name: "Joan Català",
+    tags: ["blanc i negre", "minimal", "fotografia de detall"],
+  },
+  {
+    id: "graphic-14",
+    file: "assets/graphics/graphic-14.png",
+    name: "Le Doux Supplice",
+    tags: ["institucional", "magenta", "tipografia condensada"],
+  },
+];

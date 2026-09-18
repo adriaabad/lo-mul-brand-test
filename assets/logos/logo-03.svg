@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 260" role="img" aria-labelledby="title">
+  <title id="title">Logotip amb símbol de mostra</title>
+  <path d="M176 184c25-75 54-112 88-112 33 0 62 37 87 112" fill="none" stroke="#111" stroke-width="9" stroke-linecap="round"/>
+  <text x="434" y="157" text-anchor="middle" fill="#111" font-family="Arial, sans-serif" font-size="72" letter-spacing="5">TERRA</text>
+</svg>
